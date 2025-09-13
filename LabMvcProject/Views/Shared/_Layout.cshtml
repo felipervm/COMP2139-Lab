@@ -8,22 +8,25 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LabMvcProject.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 </head>
 <body>
     <header>
-       <li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
-        <i class="fa fa-home"></i> Home
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">
-        <i class="fa-regular fa-address-card"></i> About
-    </a>
-</li>
-
+        <nav>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
+                        <i class="fa fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Home" asp-action="About">
+                        <i class="fa-regular fa-address-card"></i> About
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -32,9 +35,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - LabMvcProject - <a asp-area="" asp-controller="/Home/About" asp-action="Privacy">Felipe da Rocha Vieira Mattos</a>
+            &copy; 2025 - LabMvcProject - 
+            <a asp-controller="Home" asp-action="About">Felipe da Rocha Vieira Mattos</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
