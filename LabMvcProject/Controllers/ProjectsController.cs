@@ -1,7 +1,8 @@
 
 using Microsoft.AspNetCore.Mvc;
-using LabMvcProject.Models; // adjust namespace if needed
+using LabMvcProject.Models; 
 using Microsoft.EntityFrameworkCore;
+using LabMvcProject.Data;
 
 public class ProjectController : Controller
 {
