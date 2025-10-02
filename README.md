@@ -5,6 +5,6 @@ Name: Felipe da Rocha Vieira Mattos
 
 Student ID: 101581203
 
-Course: COMP2139 – Computer Programming and Analysis
+Course: COMP2139 – Web Development
 
 Section: 105
