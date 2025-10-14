@@ -9,7 +9,6 @@ public class Project
 
     public int ProjectId { get; set; }
 
-
     /// <summary>
     /// The name of the project.
     /// - [Required]: Ensures this property must have a value when the object is validated.
@@ -18,7 +17,6 @@ public class Project
 
     [Required]
     public required string Name { get; set; }
-
 
     /// <summary> 
     /// An optional description of the project.
@@ -35,7 +33,6 @@ public class Project
     [DataType(DataType.Date)]
     public DateTime StartDate { get; set; }
 
-
     /// <summary>
     /// The end date of the project. 
     /// - [DataType(DataType.Date)]: Specifies that this property represents a date (not a time).
@@ -51,6 +48,9 @@ public class Project
 
     public string? Status { get; set; }
 
+    public ICollection<ProjectTask>? Tasks { get; set; }
+
 }
+
 
 

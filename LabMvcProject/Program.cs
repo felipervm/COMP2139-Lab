@@ -9,6 +9,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbFile = connStr.Replace("Data Source=", "");
+Console.WriteLine($"[DEBUG] SQLite DB file (relative): {dbFile}");
+Console.WriteLine($"[DEBUG] SQLite DB full path: {Path.GetFullPath(dbFile)}");
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

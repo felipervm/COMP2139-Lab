@@ -8,28 +8,45 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LabMvcProject.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <nav>
-            <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
-                        <i class="fa fa-home"></i> Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Home" asp-action="About">
-                        <i class="fa-regular fa-address-card"></i> About
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Project" asp-action="Index">
-                        <i class="fa-regular fa-address-card"></i> Project
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- Brand (left aligned) -->
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <i class="fa fa-tasks"></i> COMP2139 GBC Project Management - Felipe
+                </a>
+
+                    <!-- Navbar toggle (for mobile) -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                         <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                      <!-- Nav links (right aligned) -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="About">
+                                <i class="fa-regular fa-address-card"></i> About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Project" asp-action="Index">
+                                <i class="fa-regular fa-folder-open"></i> Projects
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+       </nav>
     </header>
 
     <div class="container">
@@ -40,10 +57,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - LabMvcProject - 
-            <a asp-controller="Home" asp-action="About">Felipe da Rocha Vieira Mattos</a>
+            &copy; 2025 - COMP2139 GBC Project Management - Felipe
         </div>
     </footer>
+
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

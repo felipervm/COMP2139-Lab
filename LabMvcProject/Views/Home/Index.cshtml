@@ -1,47 +1,11 @@
-﻿@* indicates that the view expects a list of Project objects as its model *@
-@model List<Project>
-
-@{
-    ViewData["Title"] = "Projects";
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
 
-<h2>Projects</h2>
-
-<a asp-action="Create" class="btn btn-primary">Create New Project</a>
-
-@if (Model?.Any() == true) // to determine if there are any projects to display
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <!-- Add other project properties as needed -->
-                <th>Actions</th> @* <-- new column for links *@
-            </tr>
-        </thead>
-        <tbody>
-            <!-- A foreach loop is used to iterate over each Project in the model and display its properties in the table rows. -->
-            @foreach (var project in Model)
-            {
-                <tr>
-                    <td>@project.ProjectId</td>
-                    <td>@project.Name</td>
-                    <td>@project.Description</td>
-                    <!-- Render other project properties as needed -->
-                    <td>
-                        <a asp-action="Details" asp-route-id="@project.ProjectId" class="btn btn-info">Details</a>
-                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@project.ProjectId" class="btn btn-danger">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No projects available.</p>
-}
-
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>COMP2139 Labs Home Page</p>
+    <p>This is new content</p>
+</div>

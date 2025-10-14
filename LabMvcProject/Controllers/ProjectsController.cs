@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using LabMvcProject.Models; 
 using Microsoft.EntityFrameworkCore;
@@ -33,13 +32,67 @@ public class ProjectController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Create(Project project)
     {
-        if (ModelState.IsValid)
+        Console.WriteLine("=== CREATE METHOD CALLED ===");
+        Console.WriteLine($"Name: {project.Name}");
+        Console.WriteLine($"Description: {project.Description}");
+        Console.WriteLine($"StartDate: {project.StartDate}");
+        Console.WriteLine($"EndDate: {project.EndDate}");
+        Console.WriteLine($"Status: {project.Status}");
+        Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+
+        if (!ModelState.IsValid)
         {
+            Console.WriteLine("=== MODEL STATE ERRORS ===");
+            foreach (var key in ModelState.Keys)
+            {
+                var errors = ModelState[key].Errors;
+                if (errors.Any())
+                {
+                    Console.WriteLine($"Key: {key}");
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($"  Error: {error.ErrorMessage}");
+                        if (error.Exception != null)
+                        {
+                            Console.WriteLine($"  Exception: {error.Exception.Message}");
+                        }
+                    }
+                }
+            }
+            return View(project);
+        }
+
+        try
+        {
+            // Convert dates to UTC for database compatibility
+            project.StartDate = DateTime.SpecifyKind(project.StartDate, DateTimeKind.Utc);
+            project.EndDate = DateTime.SpecifyKind(project.EndDate, DateTimeKind.Utc);
+            
+            // Initialize Tasks collection
+            project.Tasks = new List<ProjectTask>();
+            
+            Console.WriteLine("=== ADDING TO DATABASE ===");
             _context.Projects.Add(project);
-            _context.SaveChanges();
+            
+            Console.WriteLine("=== SAVING CHANGES ===");
+            var result = _context.SaveChanges();
+            Console.WriteLine($"=== SAVED! Rows affected: {result} ===");
+            Console.WriteLine($"Project ID after save: {project.ProjectId}");
+            
             return RedirectToAction(nameof(Index));
         }
-        return View(project);
+        catch (Exception ex)
+        {
+            Console.WriteLine("=== EXCEPTION OCCURRED ===");
+            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+            }
+            ModelState.AddModelError("", "Unable to save changes: " + ex.Message);
+            return View(project);
+        }
     }
 
     // GET: Project/Details/5
@@ -80,6 +133,9 @@ public class ProjectController : Controller
         {
             try
             {
+                project.StartDate = DateTime.SpecifyKind(project.StartDate, DateTimeKind.Utc);
+                project.EndDate = DateTime.SpecifyKind(project.EndDate, DateTimeKind.Utc);
+                
                 _context.Update(project);
                 _context.SaveChanges();
             }
@@ -95,6 +151,7 @@ public class ProjectController : Controller
                 }
             }
             return RedirectToAction(nameof(Index));
+
         }
         return View(project);
     }
@@ -123,5 +180,25 @@ public class ProjectController : Controller
             _context.SaveChanges();
         }
         return RedirectToAction(nameof(Index));
+
     }
+    [HttpGet]
+public IActionResult SeedTestProject()
+{
+    var project = new Project
+    {
+        Name = "Test Project",
+        Description = "This is a test",
+        StartDate = DateTime.UtcNow,
+        EndDate = DateTime.UtcNow.AddDays(30),
+        Status = "Active",
+        Tasks = new List<ProjectTask>()
+    };
+
+    _context.Projects.Add(project);
+    _context.SaveChanges();
+
+    return RedirectToAction("Index");
+}
+
 }

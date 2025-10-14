@@ -11,6 +11,12 @@ namespace LabMvcProject.Data
         }
 
         public DbSet<Project> Projects { get; set; }
-       // public DbSet<Task> Tasks { get; set; } // If adding Tasks entity
+        // public DbSet<Task> Tasks { get; set; } // If adding Tasks entity
+        
+        public DbSet<ProjectTask> ProjectTasks { get; set; }
+
     }
+
 }
+
+
