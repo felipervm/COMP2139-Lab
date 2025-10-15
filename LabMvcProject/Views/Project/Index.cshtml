@@ -8,6 +8,19 @@
 
 <a asp-action="Create" class="btn btn-primary">Create New Project</a>
 
+<form asp-controller="ProjectTask" asp-action="Index" method="get" class="mb-3">
+    <input type="hidden" name="projectId" value="@ViewBag.ProjectId" />
+    <input type="text" name="term" value="@ViewBag.SearchTerm" placeholder="Search tasks..." class="form-control w-50 d-inline" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if ((ViewBag.Searched ?? false) && !Model.Any())
+{
+    <p>No projects found matching your search.</p>
+}
+
+
+
 @if (Model?.Any() == true)
 {
     <table class="table">

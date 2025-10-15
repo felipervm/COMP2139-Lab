@@ -1,0 +1,52 @@
+@using LabMvcProject.Models
+
+@{
+    ViewData["Title"] = "Search Results";
+    var searchTerm = ViewBag.SearchTerm ?? "";
+    var searchType = ViewBag.SearchType ?? "";
+}
+
+<h2>Search Results for "@searchTerm" (@searchType)</h2>
+
+@{
+    bool hasResults = false;
+
+    if (Model is IEnumerable<Project> projectResults)
+    {
+        hasResults = projectResults.Any();
+
+        if (hasResults)
+        {
+            <ul>
+                @foreach (var project in projectResults)
+                {
+                    <li>
+                        <strong>@project.Name</strong>: @project.Description
+                    </li>
+                }
+            </ul>
+        }
+    }
+    else if (Model is IEnumerable<ProjectTask> taskResults)
+    {
+        hasResults = taskResults.Any();
+
+        if (hasResults)
+        {
+            <ul>
+                @foreach (var task in taskResults)
+                {
+                    <li>
+                        <strong>@task.Title</strong>: @task.Description (Project: @task.Project?.Name)
+                    </li>
+                }
+            </ul>
+        }
+    }
+
+    if (!hasResults)
+    {
+        <p>No results found.</p>
+    }
+}
+

@@ -6,9 +6,22 @@
 
 <h1>Index</h1>
 
+<form asp-action="Index" method="get" class="mb-3">
+    <input type="hidden" name="projectId" value="@ViewBag.ProjectId" />
+    <input type="text" name="term" value="@ViewBag.SearchTerm" placeholder="Search tasks..." class="form-control w-50 d-inline" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+
+
+@if ((ViewBag.Searched ?? false) && !Model.Any())
+{
+    <p class="text-danger">No tasks found for "@ViewBag.SearchTerm".</p>
+}
+
+
 <p>
-    <a asp-action="Create">Create New</a>
-    <a asp-action="Create" asp-route-projectId="@ViewBag.ProjectId" class="btn btn-primary">Add Task</a>
+    <a asp-controller="ProjectTask" asp-action="Create" asp-route-projectId="@ViewBag.ProjectId" class="btn btn-primary">Add Task</a>
 </p>
 <table class="table">
     <thead>

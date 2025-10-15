@@ -12,22 +12,22 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
-                <!-- Brand (left aligned) -->
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                     <i class="fa fa-tasks"></i> COMP2139 GBC Project Management - Felipe
                 </a>
 
-                    <!-- Navbar toggle (for mobile) -->
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                         <span class="navbar-toggler-icon"></span>
-                    </button>
+                <!-- Navbar toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                      <!-- Nav links (right aligned) -->
+                <!-- Nav links -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
                                 <i class="fa fa-home"></i> Home
@@ -43,25 +43,39 @@
                                 <i class="fa-regular fa-folder-open"></i> Projects
                             </a>
                         </li>
+
+                        <!-- 🔍 Search Form -->
+                        <li class="nav-item ms-3">
+                            <form class="d-flex" asp-controller="Home" asp-action="Search" method="get">
+                                <div class="input-group">
+                                    <select class="form-select" name="searchType">
+                                        <option value="Project">Projects</option>
+                                        <option value="Task">Tasks</option>
+                                    </select>
+                                    <input class="form-control" type="search" name="searchTerm" placeholder="Search..." />
+                                    <button class="btn btn-outline-primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
-       </nav>
+        </nav>
     </header>
 
-    <div class="container">
+    <div class="container mt-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <footer class="border-top footer text-muted mt-4">
+        <div class="container text-center">
             &copy; 2025 - COMP2139 GBC Project Management - Felipe
         </div>
     </footer>
-
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

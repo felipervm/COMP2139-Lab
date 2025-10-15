@@ -9,6 +9,7 @@ using LabMvcProject.Data;
 
 namespace LabMvcProject.Controllers
 {
+    [Route("Projects/{projectId:int}/Tasks")]
     public class ProjectTaskController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -18,100 +19,86 @@ namespace LabMvcProject.Controllers
             _context = context;
         }
 
-        // GET: ProjectTask
-        public async Task<IActionResult> Index(int? projectId)
+        // GET: Projects/{projectId}/Tasks
+        [HttpGet("")]
+        public async Task<IActionResult> Index(int projectId, string? term)
         {
-            if (projectId == null)
+            var tasks = _context.ProjectTasks
+                .Include(t => t.Project)
+                .Where(t => t.ProjectId == projectId);
+
+            bool searched = false;
+
+            if (!string.IsNullOrWhiteSpace(term))
             {
-                return NotFound();
+                searched = true;
+                tasks = tasks.Where(t => t.Title.Contains(term) || t.Description.Contains(term));
             }
 
-            var tasks = await _context.ProjectTasks
-                .Include(t => t.Project)
-                .Where(t => t.ProjectId == projectId)
-                .ToListAsync();
+            var result = await tasks.ToListAsync();
 
             ViewBag.ProjectId = projectId;
-            return View(tasks);
+            ViewBag.SearchTerm = term ?? "";
+            ViewBag.Searched = searched;
+
+            return View(result);
         }
 
-        // GET: ProjectTask/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Projects/{projectId}/Tasks/Create
+        [HttpGet("Create")]
+        public IActionResult Create(int projectId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var projectTask = await _context.ProjectTasks
-                .Include(p => p.Project)
-                .FirstOrDefaultAsync(m => m.ProjectTaskId == id);
-
-            if (projectTask == null)
-            {
-                return NotFound();
-            }
-
-            return View(projectTask);
+            return View(new ProjectTask { ProjectId = projectId });
         }
 
-        // GET: ProjectTask/Create
-        public IActionResult Create(int? projectId)
-        {
-            if (projectId == null)
-            {
-                return NotFound();
-            }
-
-            ViewData["ProjectId"] = projectId;
-            return View(new ProjectTask { ProjectId = projectId.Value });
-        }
-
-        // POST: ProjectTask/Create
-        [HttpPost]
+        // POST: Projects/{projectId}/Tasks/Create
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjectTask projectTask)
+        public async Task<IActionResult> Create(int projectId, ProjectTask projectTask)
         {
             if (ModelState.IsValid)
             {
+                projectTask.ProjectId = projectId;
                 _context.Add(projectTask);
                 await _context.SaveChangesAsync();
 
-                // ✅ Redirect back to the Project Details page
-                return RedirectToAction("Details", "Project", new { id = projectTask.ProjectId });
+                return RedirectToAction("Details", "Project", new { id = projectId });
             }
 
-            ViewData["ProjectId"] = projectTask.ProjectId;
+            ViewBag.ProjectId = projectId;
             return View(projectTask);
         }
 
-        // GET: ProjectTask/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Projects/{projectId}/Tasks/Details/{id}
+        [HttpGet("Details/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var task = await _context.ProjectTasks
+                .Include(t => t.Project)
+                .FirstOrDefaultAsync(t => t.ProjectTaskId == id);
 
-            var projectTask = await _context.ProjectTasks.FindAsync(id);
-            if (projectTask == null)
-            {
-                return NotFound();
-            }
+            if (task == null) return NotFound();
 
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "Name", projectTask.ProjectId);
-            return View(projectTask);
+            return View(task);
         }
 
-        // POST: ProjectTask/Edit/5
-        [HttpPost]
+        // GET: Projects/{projectId}/Tasks/Edit/{id}
+        [HttpGet("Edit/{id:int}")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var task = await _context.ProjectTasks.FindAsync(id);
+            if (task == null) return NotFound();
+
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "ProjectId", "Name", task.ProjectId);
+            return View(task);
+        }
+
+        // POST: Projects/{projectId}/Tasks/Edit/{id}
+        [HttpPost("Edit/{id:int}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProjectTaskId,Title,Description,ProjectId")] ProjectTask projectTask)
         {
-            if (id != projectTask.ProjectTaskId)
-            {
-                return NotFound();
-            }
+            if (id != projectTask.ProjectTaskId) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -122,14 +109,10 @@ namespace LabMvcProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectTaskExists(projectTask.ProjectTaskId))
-                    {
+                    if (!_context.ProjectTasks.Any(e => e.ProjectTaskId == id))
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
 
                 return RedirectToAction("Details", "Project", new { id = projectTask.ProjectId });
@@ -139,45 +122,32 @@ namespace LabMvcProject.Controllers
             return View(projectTask);
         }
 
-        // GET: ProjectTask/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Projects/{projectId}/Tasks/Delete/{id}
+        [HttpGet("Delete/{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var task = await _context.ProjectTasks
+                .Include(t => t.Project)
+                .FirstOrDefaultAsync(t => t.ProjectTaskId == id);
 
-            var projectTask = await _context.ProjectTasks
-                .Include(p => p.Project)
-                .FirstOrDefaultAsync(m => m.ProjectTaskId == id);
+            if (task == null) return NotFound();
 
-            if (projectTask == null)
-            {
-                return NotFound();
-            }
-
-            return View(projectTask);
+            return View(task);
         }
 
-        // POST: ProjectTask/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Projects/{projectId}/Tasks/Delete/{id}
+        [HttpPost("Delete/{id:int}"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var projectTask = await _context.ProjectTasks.FindAsync(id);
-            if (projectTask != null)
+            var task = await _context.ProjectTasks.FindAsync(id);
+            if (task != null)
             {
-                _context.ProjectTasks.Remove(projectTask);
+                _context.ProjectTasks.Remove(task);
                 await _context.SaveChangesAsync();
             }
 
-            // ✅ Redirect back to the project’s details page
-            return RedirectToAction("Details", "Project", new { id = projectTask.ProjectId });
-        }
-
-        private bool ProjectTaskExists(int id)
-        {
-            return _context.ProjectTasks.Any(e => e.ProjectTaskId == id);
+            return RedirectToAction("Details", "Project", new { id = task.ProjectId });
         }
     }
 }
