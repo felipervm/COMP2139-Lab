@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using LabMvcProject.Models; // Replace with your actual namespace
+using LabMvcProject.Areas.ProjectManagement.Models;
+
+
 
 namespace LabMvcProject.Data
 {

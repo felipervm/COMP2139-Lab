@@ -1,0 +1,31 @@
+@model IEnumerable<Project>
+
+<h2>Projects</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Project</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.Name)</td>
+                <td>@Html.DisplayFor(m => item.Description)</td>
+                <td>@Html.DisplayFor(m => item.StartDate)</td>
+                <td>@Html.DisplayFor(m => item.EndDate)</td>
+                <td>@item.Status</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.ProjectId">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

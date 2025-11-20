@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LabMvcProject.Data;
+using LabMvcProject.Areas.ProjectManagement.Models;
 
-namespace LabMvcProject.Controllers
-{
+
+namespace LabMvcProject.Areas.ProjectManagement.Controllers
+{    
+    [Area("ProjectManagement")]
     [Route("Projects/{projectId:int}/Tasks")]
     public class ProjectTaskController : Controller
     {

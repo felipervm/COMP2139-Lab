@@ -1,25 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
-using LabMvcProject.Models;
+using LabMvcProject.Areas.ProjectManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using LabMvcProject.Data;
 using System.Linq;
 
-namespace LabMvcProject.Controllers
+namespace LabMvcProject.Areas.ProjectManagement.Controllers
 {
-    
-    [Route("projects")]
-    public class ProjectController : Controller
+    [Area("ProjectManagement")]
+    [Route("ProjectManagement/[controller]/[action]")]
+    public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProjectController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
        
         [HttpGet("")]
-        public IActionResult Index()
+        public IActionResult Index(int projectId, string? term)
         {
             var projects = _context.Projects.ToList();
              ViewBag.Searched = false;
@@ -54,8 +54,8 @@ namespace LabMvcProject.Controllers
         }
 
         
-        [HttpGet("details/{id:int}")]
-        public IActionResult Details(int id)
+        [HttpGet("Details/{id:int}")]
+        public IActionResult Details(int projectId, int id)
         {
             var project = _context.Projects
                 .Include(p => p.Tasks)
@@ -97,8 +97,8 @@ namespace LabMvcProject.Controllers
         }
 
       
-        [HttpGet("edit/{id:int}")]
-        public IActionResult Edit(int id)
+        [HttpGet("Edit/{id:int}")]
+        public IActionResult Edit(int projectId, int id)
         {
             var project = _context.Projects.Find(id);
             if (project == null)
@@ -140,8 +140,8 @@ namespace LabMvcProject.Controllers
         }
 
         
-        [HttpGet("delete/{id:int}")]
-        public IActionResult Delete(int id)
+        [HttpGet("Delete/{id:int}")]
+        public IActionResult Delete(int projectId, int id)
         {
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == id);
             if (project == null)

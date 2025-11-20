@@ -1,0 +1,73 @@
+@model IEnumerable<ProjectTask>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Tasks</h1>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <input type="hidden" name="projectId" value="@ViewBag.ProjectId" />
+    <input type="text" name="term" value="@ViewBag.SearchTerm" placeholder="Search tasks..." class="form-control w-50 d-inline" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if ((ViewBag.Searched ?? false) && !Model.Any())
+{
+    <p class="text-danger">No tasks found for "@ViewBag.SearchTerm".</p>
+}
+
+<p>
+    <a asp-controller="ProjectTask"
+       asp-action="Create"
+       asp-route-projectId="@ViewBag.ProjectId"
+       class="btn btn-primary">
+        Add Task
+    </a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Project)</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@item.Project?.Name</td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-projectId="@ViewBag.ProjectId"
+                       asp-route-id="@item.ProjectTaskId">Edit</a> |
+
+                    <a asp-action="Details"
+                       asp-route-projectId="@ViewBag.ProjectId"
+                       asp-route-id="@item.ProjectTaskId">Details</a> |
+
+                    <a asp-action="Delete"
+                       asp-route-projectId="@ViewBag.ProjectId"
+                       asp-route-id="@item.ProjectTaskId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <a asp-controller="Project"
+       asp-action="Details"
+       asp-route-id="@ViewBag.ProjectId"
+       class="btn btn-secondary">
+        Back to Project Details
+    </a>
+</p>
+

@@ -24,11 +24,17 @@ app.UseAuthorization();
 // Status code pages
 app.UseStatusCodePagesWithReExecute("/Home/NotFound");
 
-// Map default conventional route (attribute routes still work)
+// Area route
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Projects}/{action=Index}/{id?}");
+
+// DEFAULT MVC ROUTE (FIXES YOUR 404)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
 
 
