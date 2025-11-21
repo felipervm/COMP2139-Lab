@@ -1,188 +1,124 @@
 using Microsoft.AspNetCore.Mvc;
-using LabMvcProject.Areas.ProjectManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using LabMvcProject.Data;
-using System.Linq;
+using LabMvcProject.Areas.ProjectManagement.Models;
 
 namespace LabMvcProject.Areas.ProjectManagement.Controllers
 {
     [Area("ProjectManagement")]
-    [Route("ProjectManagement/[controller]/[action]")]
-    public class ProjectsController : Controller
+    [Route("ProjectManagement/[controller]")]
+    public class ProjectController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-       
+        // GET: ProjectManagement/Project
         [HttpGet("")]
-        public IActionResult Index(int projectId, string? term)
+        public async Task<IActionResult> Index()
         {
-            var projects = _context.Projects.ToList();
-             ViewBag.Searched = false;
+            var projects = await _context.Projects.ToListAsync();
+            ViewBag.Searched = false;
             return View(projects);
         }
 
-       
+        // GET: ProjectManagement/Project/Search
         [HttpGet("search")]
         public async Task<IActionResult> Search(string? term)
         {
-            var projects = from p in _context.Projects select p;
+            var query = _context.Projects.AsQueryable();
             bool searched = false;
 
-            if (!string.IsNullOrEmpty(term))
+            if (!string.IsNullOrWhiteSpace(term))
             {
                 searched = true;
-                projects = projects.Where(p =>
+                query = query.Where(p =>
                     p.Name.Contains(term) ||
                     p.Description.Contains(term));
             }
 
-            var result = await projects.ToListAsync();
-            ViewBag.SearchTerm = term;
             ViewBag.Searched = searched;
+            ViewBag.SearchTerm = term;
 
-            if (searched && !result.Any())
-            {
-                ViewBag.Message = $"No projects found matching '{term}'.";
-            }
-
-            return View("Index", result);
+            return View("Index", await query.ToListAsync());
         }
 
-        
-        [HttpGet("Details/{id:int}")]
-        public IActionResult Details(int projectId, int id)
+        // GET: ProjectManagement/Project/5
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var project = _context.Projects
+            var project = await _context.Projects
                 .Include(p => p.Tasks)
-                .FirstOrDefault(p => p.ProjectId == id);
+                .FirstOrDefaultAsync(p => p.ProjectId == id);
 
             if (project == null)
-            {
                 return NotFound();
-            }
 
             return View(project);
         }
 
-        
+        // GET: ProjectManagement/Project/Create
         [HttpGet("create")]
         public IActionResult Create()
         {
             return View();
         }
 
-       
+        // POST: ProjectManagement/Project/Create
         [HttpPost("create")]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Project project)
+        public async Task<IActionResult> Create(Project model)
         {
             if (!ModelState.IsValid)
-            {
-                return View(project);
-            }
+                return View(model);
 
-            project.StartDate = DateTime.SpecifyKind(project.StartDate, DateTimeKind.Utc);
-            project.EndDate = DateTime.SpecifyKind(project.EndDate, DateTimeKind.Utc);
-            project.Tasks = new List<ProjectTask>();
+            await _context.Projects.AddAsync(model);
+            await _context.SaveChangesAsync();
 
-            _context.Projects.Add(project);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
-      
-        [HttpGet("Edit/{id:int}")]
-        public IActionResult Edit(int projectId, int id)
+        // GET: ProjectManagement/Project/Edit/5
+        [HttpGet("edit/{id:int}")]
+        public async Task<IActionResult> Edit(int id)
         {
-            var project = _context.Projects.Find(id);
+            var project = await _context.Projects.FindAsync(id);
             if (project == null)
-            {
                 return NotFound();
-            }
+
             return View(project);
         }
 
-       
+        // POST: ProjectManagement/Project/Edit/5
         [HttpPost("edit/{id:int}")]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("ProjectId,Name,Description,StartDate,EndDate,Status")] Project project)
+        public async Task<IActionResult> Edit(int id, Project model)
         {
-            if (id != project.ProjectId)
+            if (id != model.ProjectId)
                 return NotFound();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    project.StartDate = DateTime.SpecifyKind(project.StartDate, DateTimeKind.Utc);
-                    project.EndDate = DateTime.SpecifyKind(project.EndDate, DateTimeKind.Utc);
+            if (!ModelState.IsValid)
+                return View(model);
 
-                    _context.Update(project);
-                    _context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Projects.Any(e => e.ProjectId == project.ProjectId))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
+            _context.Update(model);
+            await _context.SaveChangesAsync();
 
-            return View(project);
+            return RedirectToAction("Index");
         }
 
-        
-        [HttpGet("Delete/{id:int}")]
-        public IActionResult Delete(int projectId, int id)
+        // POST: ProjectManagement/Project/Delete/5
+        [HttpPost("delete/{id:int}")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = _context.Projects.FirstOrDefault(p => p.ProjectId == id);
+            var project = await _context.Projects.FindAsync(id);
             if (project == null)
-            {
                 return NotFound();
-            }
-            return View(project);
-        }
 
-       
-        [HttpPost("delete/{id:int}"), ActionName("DeleteConfirmed")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var project = _context.Projects.Find(id);
-            if (project != null)
-            {
-                _context.Projects.Remove(project);
-                _context.SaveChanges();
-            }
-            return RedirectToAction(nameof(Index));
-        }
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
 
-       
-        [HttpGet("seed")]
-        public IActionResult SeedTestProject()
-        {
-            var project = new Project
-            {
-                Name = "Test Project",
-                Description = "This is a test project",
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Status = "Active",
-                Tasks = new List<ProjectTask>()
-            };
-
-            _context.Projects.Add(project);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

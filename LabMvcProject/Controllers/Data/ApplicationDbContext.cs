@@ -18,6 +18,10 @@ namespace LabMvcProject.Data
         
         public DbSet<ProjectTask> ProjectTasks { get; set; }
 
+        public DbSet<ProjectComment> ProjectComments { get; set; }
+
+        
+
     }
 
 }

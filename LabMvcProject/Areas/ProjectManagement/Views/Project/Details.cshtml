@@ -1,6 +1,21 @@
 @model Project
 
 <h2>Project Details</h2>
+<h3>Comments</h3>
+
+<div id="comments-container"></div>
+
+<textarea id="commentInput" class="form-control mt-3"></textarea>
+
+<button id="sendComment" class="btn btn-primary mt-2">Add Comment</button>
+
+@section Scripts {
+    <script src="~/js/projectComments.js"></script>
+    <script>
+        loadComments(@Model.ProjectId);
+    </script>
+}
+
 
 <div class="card p-3">
 
