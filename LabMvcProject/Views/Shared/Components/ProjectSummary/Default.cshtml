@@ -1,0 +1,25 @@
+@model LabMvcProject.Areas.ProjectManagement.Models.Project
+
+<div class="card shadow-sm p-3 mb-3">
+    <h5 class="fw-bold">@Model.Name</h5>
+
+    <p class="mb-1 text-muted">
+        <strong>Description:</strong> @Model.Description
+    </p>
+
+    <p class="mb-1">
+        <strong>Start Date:</strong> @Model.StartDate.ToShortDateString()
+    </p>
+
+    <p class="mb-1">
+        <strong>End Date:</strong> @Model.EndDate.ToShortDateString()
+
+    </p>
+
+    @if (Model.Tasks != null)
+    {
+        <p class="mb-1">
+            <strong>Total Tasks:</strong> @Model.Tasks.Count
+        </p>
+    }
+</div>
